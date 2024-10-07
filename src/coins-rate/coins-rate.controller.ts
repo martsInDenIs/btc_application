@@ -1,19 +1,19 @@
-import { Controller, Get } from '@nestjs/common';
-import { QueryBus } from '@nestjs/cqrs';
-import { GetCoinRateQuery } from './queries/get-coin-rate';
+import { Controller, Get, Inject } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
+import { FetchCoinRateCommand } from './commands/fetch-coin-rate';
+import { CoinInfo } from './coins-rate.types';
 
 @Controller('rate')
 export class CoinsRateController {
-  // TODO: Move into another file
-  private readonly coinId = 'bitcoin';
-  private readonly currencyId = 'uah';
-
-  constructor(private queryBus: QueryBus) {}
+  constructor(
+    private commandBus: CommandBus,
+    @Inject('COIN_INFO') private readonly coinInfo: CoinInfo,
+  ) {}
 
   @Get('')
   get() {
-    return this.queryBus.execute(
-      new GetCoinRateQuery(this.coinId, this.currencyId),
+    return this.commandBus.execute(
+      new FetchCoinRateCommand(this.coinInfo.coinId, this.coinInfo.currencyId),
     );
   }
 }

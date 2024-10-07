@@ -1,0 +1,22 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Coin {
+    id    Int        @id @default(autoincrement())
+    name  String     @unique
+    rates CoinRate[]
+}
+
+model CoinRate {
+    id     Int      @id @default(autoincrement())
+    coin   Coin     @relation(fields: [coinId], references: [id])
+    coinId Int
+    rate   Int
+    date   DateTime @default(now())
+}
