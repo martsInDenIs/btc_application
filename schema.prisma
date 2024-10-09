@@ -22,8 +22,14 @@ model CoinRate {
 }
 
 model Subscription {
-    id        Int      @id @default(autoincrement())
-    email     String   @unique
-    createdAt DateTime @default(now())
+    id        Int       @id @default(autoincrement())
+    email     String    @unique
+    createdAt DateTime  @default(now())
     deletedAt DateTime?
+}
+
+model Metrics {
+    id        Int      @id @default(autoincrement())
+    data      String
+    createdAt DateTime @default(now())
 }
