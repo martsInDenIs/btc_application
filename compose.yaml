@@ -25,7 +25,7 @@ services:
     ports: ['${PORT}:${PORT}']
   worker_app:
     environment:
-      WORKER_METRICS_URL: http://service_app:3000
+      WORKER_METRICS_URL: http://service_app:${PORT}
       DATABASE_URL: postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@database:5432/${DATABASE_NAME}
     depends_on:
       database:

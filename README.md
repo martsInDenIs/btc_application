@@ -36,3 +36,6 @@ I reccomend to copy `description.yaml` file and put it inside [swagger](https://
 # Ways for improvement
 1. Use advanced authorisation methods for email services
 2. Link the last record in the Metrics table from the database to Prometheus so that you don't lose metrics every time you restart the application
+
+# Clarification
+To ensure that rate is sent to all subscribers every day at 9 a.m. Kyiv time, you may need to set the time in the system
