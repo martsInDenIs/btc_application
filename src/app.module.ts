@@ -8,6 +8,7 @@ import { EmailsModule } from './emails/emails.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { CoinModule } from './coin/coin.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CoinModule } from './coin/coin.module';
     DatabaseModule,
     SubscriptionsModule,
     EmailsModule,
+    ScheduleModule.forRoot(),
     CqrsModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     MailerModule.forRoot({

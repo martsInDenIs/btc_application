@@ -14,6 +14,7 @@ import { makeGaugeProvider } from '@willsoto/nestjs-prometheus';
 import { CoinPreservedHandler } from './events/coin-preserved/coin-preserved.handler';
 import { CoinModule } from 'src/coin/coin.module';
 import { CoinRateService } from './coin-rate.service';
+import { DailyRateService } from './services/daily-rate.service';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CoinRateService } from './coin-rate.service';
   ],
   controllers: [CoinsRateController],
   providers: [
+    DailyRateService,
     CoinRateService,
     CoinGeekoService,
     SaveCoinRateHandler,
