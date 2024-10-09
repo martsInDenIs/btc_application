@@ -5,7 +5,7 @@ There are two ways to run the application: locally or in a docker container. But
 Required env:
 * PORT - The port that your application will listen to
 * CURRENCY, COIN - Configured by default. Can be changed to work with other coins
-* EMAIL_USER - Mail that will be used to send letters. The mail service in the app is configured for using with gmail, so please use it =)
+* EMAIL_USER - Mail that will be used to send letters. The mail service in the app is configured for using with gmail, so please use it =) Use mail with 2-step-verification enabled
 * EMAIL_PASSWORD - Password for authorisation, which will allow you to send emails. Follow the [link](https://security.google.com/settings/security/apppasswords) to generate a password
 * CRON_SCHEDULE - Schedule for the worker that will scrape the prometheus data. Use crontab format. Configured by default. Can generate your own by following the [link](https://crontab.guru/)
 * DAILY_RATE_CRON - Schedule for running a daily notification that will send an email with the current rate to all subscribers. Configured by default. Can generate your own by following the [link](https://crontab.guru/)
