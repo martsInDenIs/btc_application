@@ -35,9 +35,10 @@ export class PublishRateHandler implements ICommandHandler<PublishRateHandler> {
       message,
     );
 
-    // TODO: Add some real metrics
-    this.eventBus.publish(new EmailSentEvent(0, 0));
+    this.eventBus.publish(
+      new EmailSentEvent(result.accepted.length, result.rejected.length),
+    );
 
-    return result;
+    return { ...result, message };
   }
 }

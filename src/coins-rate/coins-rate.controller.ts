@@ -1,9 +1,19 @@
-import { Controller, Get, HttpCode, Inject, Post } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  HttpCode,
+  Inject,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { CoinInfo } from './coins-rate.types';
 import { GetCoinRateQuery } from './queries/get-coin-rate';
 import { HttpStatusCode } from 'axios';
 import { PublishRateQuery } from './queries/publish-rate';
+import { PublishRateQueryResponse } from 'src/subscriptions/subscriptions.types';
+import { PublishedRateEntity } from './entities/published-rate';
 
 @Controller('api')
 export class CoinsRateController {
@@ -19,10 +29,15 @@ export class CoinsRateController {
     );
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post('rate')
   @HttpCode(HttpStatusCode.Ok)
-  // TODO: Add response pipe
-  sendRate() {
-    return this.queryBus.execute(new PublishRateQuery());
+  async sendRate() {
+    const response = await this.queryBus.execute<
+      PublishRateQuery,
+      PublishRateQueryResponse
+    >(new PublishRateQuery());
+
+    return new PublishedRateEntity(response);
   }
 }

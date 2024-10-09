@@ -1,8 +1,23 @@
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { CommandBus, IQuery, QueryBus } from '@nestjs/cqrs';
 import { GetAllEmailsQuery } from './queries/get-all-emails';
 import { CreateSubscriptionCommand } from './commands/create-subscription';
 import { UnsubscribeCommand } from './commands/unsubscribe';
+import { Subscription } from '@prisma/client';
+import { SubscriptionEntity } from './entities/subscription-entity';
+import { DoesntCustomerSubscribedGuard } from './guards/doesnt-customer-subscribed';
+import { DoesSubscriptionExistGuard } from './guards/does-subscription-exist';
 
 @Controller('api')
 export class SubscriptionsController {
@@ -11,22 +26,29 @@ export class SubscriptionsController {
     private readonly commandBus: CommandBus,
   ) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('emails')
-  // TODO: Create response pipe (set status based on deletedAt attribute)
-  getAllEmails() {
-    return this.queryBus.execute(new GetAllEmailsQuery());
+  async getAllEmails() {
+    const subscriptions = await this.queryBus.execute<IQuery, Subscription[]>(
+      new GetAllEmailsQuery(),
+    );
+
+    return subscriptions.map(
+      (subscription) => new SubscriptionEntity(subscription),
+    );
   }
 
-  // TODO: Add validation pipe
-  // TODO: Add creation guard
+  @UseGuards(DoesntCustomerSubscribedGuard)
   @Post('emails')
-  subscribeEmail(@Body('email') email: string) {
-    return this.commandBus.execute(new CreateSubscriptionCommand(email));
+  @HttpCode(HttpStatus.OK)
+  async subscribeEmail(@Body('email') email: string) {
+    await this.commandBus.execute(new CreateSubscriptionCommand(email));
   }
 
-  // TODO: Add deletion guard
+  @UseGuards(DoesSubscriptionExistGuard)
   @Delete('emails')
-  deleteEmails(@Body('email') email: string) {
-    return this.commandBus.execute(new UnsubscribeCommand(email));
+  @HttpCode(HttpStatus.OK)
+  async deleteEmails(@Body('email') email: string) {
+    await this.commandBus.execute(new UnsubscribeCommand(email));
   }
 }

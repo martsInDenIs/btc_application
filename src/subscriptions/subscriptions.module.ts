@@ -7,11 +7,15 @@ import { UnsubscribeHandler } from './commands/unsubscribe';
 import { SubscriptionsService } from './subscriptions.service';
 import { makeCounterProvider } from '@willsoto/nestjs-prometheus';
 import { SubscriptionUpdatesHandler } from './events/subscription-updates/subscription-updates.handler';
+import { DoesntCustomerSubscribedGuard } from './guards/doesnt-customer-subscribed';
+import { DoesSubscriptionExistGuard } from './guards/does-subscription-exist';
 
 @Module({
   imports: [DatabaseModule],
   controllers: [SubscriptionsController],
   providers: [
+    DoesntCustomerSubscribedGuard,
+    DoesSubscriptionExistGuard,
     SubscriptionsService,
     GetAllEmailsHandler,
     CreateSubscriptionHandler,

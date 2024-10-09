@@ -12,11 +12,20 @@ import { EmailsModule } from 'src/emails/emails.module';
 import { CoinGeekoService } from './services/coin-geeko.service';
 import { makeGaugeProvider } from '@willsoto/nestjs-prometheus';
 import { CoinPreservedHandler } from './events/coin-preserved/coin-preserved.handler';
+import { CoinModule } from 'src/coin/coin.module';
+import { CoinRateService } from './coin-rate.service';
 
 @Module({
-  imports: [HttpModule, DatabaseModule, SubscriptionsModule, EmailsModule],
+  imports: [
+    HttpModule,
+    DatabaseModule,
+    SubscriptionsModule,
+    EmailsModule,
+    CoinModule,
+  ],
   controllers: [CoinsRateController],
   providers: [
+    CoinRateService,
     CoinGeekoService,
     SaveCoinRateHandler,
     GetCoinRateHandler,

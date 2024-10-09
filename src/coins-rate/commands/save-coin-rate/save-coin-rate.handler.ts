@@ -1,31 +1,25 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { SaveCoinRateCommand } from './save-coin-rate.command';
-import { DatabaseService } from 'src/database/database.service';
 import { CoinPreservedEvent } from 'src/coins-rate/events/coin-preserved';
+import { CoinService } from 'src/coin/coin.service';
+import { CoinRateService } from 'src/coins-rate/coin-rate.service';
 
 @CommandHandler(SaveCoinRateCommand)
 export class SaveCoinRateHandler
   implements ICommandHandler<SaveCoinRateCommand>
 {
   constructor(
-    private readonly db: DatabaseService,
+    private readonly coinService: CoinService,
+    private readonly coinRateService: CoinRateService,
     private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: SaveCoinRateCommand): Promise<unknown> {
     const { coinId, rate } = command;
 
-    // TODO: Move to another model
-    const coin = await this.db.coin.upsert({
-      create: { name: coinId },
-      update: {},
-      where: { name: coinId },
-    });
+    const coin = await this.coinService.createCoin(coinId);
 
-    // TODO: Move to the service
-    const result = await this.db.coinRate.create({
-      data: { coinId: coin.id, rate: rate },
-    });
+    const result = await this.coinRateService.create(coin.id, rate);
 
     this.eventBus.publish(new CoinPreservedEvent(rate));
 

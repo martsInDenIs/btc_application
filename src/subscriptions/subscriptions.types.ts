@@ -5,3 +5,12 @@ export type SubscribedResponse = {
 export type UnsubscribedResponse = {
   unsubscription: true;
 };
+
+export type SendEmailResponse = {
+  accepted: string[];
+  rejected: string[];
+};
+
+export type PublishRateQueryResponse = SendEmailResponse & {
+  message: string;
+};

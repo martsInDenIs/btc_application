@@ -13,10 +13,16 @@ export class UnsubscribeHandler implements ICommandHandler<UnsubscribeCommand> {
   async execute(command: UnsubscribeCommand): Promise<any> {
     const { email } = command;
 
+    const subscription = await this.service.getSubscription(email);
+
+    if (subscription.deletedAt) {
+      return true;
+    }
+
     const response = await this.service.unsubscribe(email);
 
     this.eventBus.publish(new SubscriptionUpdatesEvent(email, response));
 
-    return response;
+    return true;
   }
 }

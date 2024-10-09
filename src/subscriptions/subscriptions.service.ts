@@ -59,4 +59,8 @@ export class SubscriptionsService {
 
     return { unsubscription: true };
   }
+
+  getSubscription(email: string) {
+    return this.db.subscription.findUnique({ where: { email } });
+  }
 }

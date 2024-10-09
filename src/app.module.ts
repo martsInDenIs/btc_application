@@ -7,9 +7,11 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { EmailsModule } from './emails/emails.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { CoinModule } from './coin/coin.module';
 
 @Module({
   imports: [
+    CoinModule,
     CoinsRateModule,
     DatabaseModule,
     SubscriptionsModule,
