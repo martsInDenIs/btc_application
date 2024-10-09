@@ -1,73 +1,38 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# BTC_APPLICATION 
+There are two ways to run the application: locally or in a docker container. But first of all, you need to create an `.env` file by copying `.env.example` and fill it.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+#### ENV file
+Required env:
+* PORT - The port that your application will listen to
+* CURRENCY, COIN - Configured by default. Can be changed to work with other coins
+* EMAIL_USER - Mail that will be used to send letters. The mail service in the app is configured for using with gmail, so please use it =)
+* EMAIL_PASSWORD - Password for authorisation, which will allow you to send emails. Follow the [link](https://security.google.com/settings/security/apppasswords) to generate a password
+* CRON_SCHEDULE - Schedule for the worker that will scrape the prometheus data. Use crontab format. Configured by default. Can generate your own by following the [link](https://crontab.guru/)
+* DAILY_RATE_CRON - Schedule for running a daily notification that will send an email with the current rate to all subscribers. Configured by default. Can generate your own by following the [link](https://crontab.guru/)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Env for local using:
+* DATABASE_URL - The address where the database is located. Replace the templates with your own data. 
+* WORKER_METRICS_URL - URL address of the service. For local use, just change the port so that it is equal to PORT env.
 
-## Description
+Env for docker:
+* DATABASE_USER - name that will be used for access to the DB system.
+DATABASE_PASSWORD - password that will be used for access to the DB system.
+DATABASE_NAME - database name =)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Local using
+Go to the project folder and run the commands:
+1. Run `npm install` in the terminal.
+2. Run `npx prisma migrate deploy && npx prisma generate` in the terminal.
+3. Run `npm run start:dev` command in the terminal to start the **service**.
+4. Run `npm run worker` command in the terminal to start the **worker**.
 
-## Installation
+### Docker using
+Go to the project folder and run the commands:
+1. Run `docker-compose up` command in the terminal.
 
-```bash
-$ npm install
-```
+# Interacting
+I reccomend to copy `description.yaml` file and put it inside [swagger](https://editor.swagger.io/). This will allow you to use prepared endpoints and see responses in real time. The only thing you may need to change is host (line 7). It must be equal to the PORT in the env file.
 
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+# Ways for improvement
+1. Use advanced authorisation methods for email services
+2. Link the last record in the Metrics table from the database to Prometheus so that you don't lose metrics every time you restart the application

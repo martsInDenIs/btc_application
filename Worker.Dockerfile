@@ -12,4 +12,4 @@ RUN rm -rf src
 
 RUN npx prisma generate
 
-CMD [ "npm", "run", "worker:dev" ]
+CMD [ "npm", "run", "worker" ]
