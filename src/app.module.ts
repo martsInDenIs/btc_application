@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { EmailsModule } from './emails/emails.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
   imports: [
@@ -17,15 +18,16 @@ import { MailerModule } from '@nestjs-modules/mailer';
     ConfigModule.forRoot({ isGlobal: true }),
     MailerModule.forRoot({
       transport: {
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
+        service: 'gmail',
         auth: {
           user: process.env.EMAIL_USER,
           // TODO: Add description to how generate an app passowrd
           pass: process.env.EMAIL_PASSWORD,
         },
       },
+    }),
+    PrometheusModule.register({
+      path: 'api/metrics',
     }),
   ],
 })

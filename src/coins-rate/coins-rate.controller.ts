@@ -1,15 +1,14 @@
 import { Controller, Get, HttpCode, Inject, Post } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { QueryBus } from '@nestjs/cqrs';
 import { CoinInfo } from './coins-rate.types';
 import { GetCoinRateQuery } from './queries/get-coin-rate';
 import { HttpStatusCode } from 'axios';
-import { PublishRateCommand } from './commands/publish-rate';
+import { PublishRateQuery } from './queries/publish-rate';
 
 @Controller('api')
 export class CoinsRateController {
   constructor(
     private readonly queryBus: QueryBus,
-    private readonly commandBus: CommandBus,
     @Inject('COIN_INFO') private readonly coinInfo: CoinInfo,
   ) {}
 
@@ -24,6 +23,6 @@ export class CoinsRateController {
   @HttpCode(HttpStatusCode.Ok)
   // TODO: Add response pipe
   sendRate() {
-    return this.commandBus.execute(new PublishRateCommand());
+    return this.queryBus.execute(new PublishRateQuery());
   }
 }

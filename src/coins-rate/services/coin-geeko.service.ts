@@ -1,14 +1,14 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { ApiResponse } from './coins-rate.types';
+import { ApiResponse } from '../coins-rate.types';
 
 @Injectable()
-export class CoinsRateService {
+export class CoinGeekoService {
   private readonly url = 'https:///api.coingecko.com/api/v3/simple/price';
 
   constructor(private readonly httpService: HttpService) {}
 
-  async getRate(coin: string, currency: string) {
+  async fetchRate(coin: string, currency: string) {
     const { data } = await this.httpService.axiosRef.get<ApiResponse>(
       `${this.url}?ids=${coin}&vs_currencies=${currency}`,
     );

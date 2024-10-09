@@ -1,16 +1,17 @@
-import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { PublishRateCommand } from './publish-rate.command';
-import { CoinsRateService } from 'src/coins-rate/coins-rate.service';
+import { EventBus, ICommandHandler, QueryHandler } from '@nestjs/cqrs';
+import { PublishRateQuery } from './publish-rate.query';
 import { Inject } from '@nestjs/common';
 import { CoinInfo } from 'src/coins-rate/coins-rate.types';
 import { EmailsService } from 'src/emails/emails.service';
 import { CoinGettedEvent } from 'src/coins-rate/events/coin-getted';
 import { SubscriptionsService } from 'src/subscriptions/subscriptions.service';
+import { EmailSentEvent } from 'src/emails/events/email-sent';
+import { CoinGeekoService } from 'src/coins-rate/services/coin-geeko.service';
 
-@CommandHandler(PublishRateCommand)
+@QueryHandler(PublishRateQuery)
 export class PublishRateHandler implements ICommandHandler<PublishRateHandler> {
   constructor(
-    private readonly coinsRateService: CoinsRateService,
+    private readonly coinGeekoService: CoinGeekoService,
     private readonly emailService: EmailsService,
     private readonly subscriptionsService: SubscriptionsService,
     private readonly eventBus: EventBus,
@@ -18,7 +19,7 @@ export class PublishRateHandler implements ICommandHandler<PublishRateHandler> {
   ) {}
 
   async execute(): Promise<any> {
-    const rate = await this.coinsRateService.getRate(
+    const rate = await this.coinGeekoService.fetchRate(
       this.coinInfo.coinId,
       this.coinInfo.currencyId,
     );
@@ -33,6 +34,9 @@ export class PublishRateHandler implements ICommandHandler<PublishRateHandler> {
       subscriptions.map(({ email }) => email),
       message,
     );
+
+    // TODO: Add some real metrics
+    this.eventBus.publish(new EmailSentEvent(0, 0));
 
     return result;
   }

@@ -4,22 +4,29 @@ import { CoinsRateController } from './coins-rate.controller';
 import { SaveCoinRateHandler } from './commands/save-coin-rate';
 import { DatabaseModule } from 'src/database/database.module';
 import { CoinInfo } from './coins-rate.types';
-import { CoinsRateService } from './coins-rate.service';
 import { GetCoinRateHandler } from './queries/get-coin-rate';
 import { CoinEventSagas } from './sagas/coin-events.sagas';
-import { PublishRateHandler } from './commands/publish-rate';
+import { PublishRateHandler } from './queries/publish-rate';
 import { SubscriptionsModule } from 'src/subscriptions/subscriptions.module';
 import { EmailsModule } from 'src/emails/emails.module';
+import { CoinGeekoService } from './services/coin-geeko.service';
+import { makeGaugeProvider } from '@willsoto/nestjs-prometheus';
+import { CoinPreservedHandler } from './events/coin-preserved/coin-preserved.handler';
 
 @Module({
   imports: [HttpModule, DatabaseModule, SubscriptionsModule, EmailsModule],
   controllers: [CoinsRateController],
   providers: [
-    CoinsRateService,
+    CoinGeekoService,
     SaveCoinRateHandler,
     GetCoinRateHandler,
     PublishRateHandler,
     CoinEventSagas,
+    CoinPreservedHandler,
+    makeGaugeProvider({
+      name: 'exchange_rate',
+      help: 'Current exchange rate',
+    }),
     {
       provide: 'COIN_INFO',
       useValue: {
@@ -28,6 +35,6 @@ import { EmailsModule } from 'src/emails/emails.module';
       } as CoinInfo,
     },
   ],
-  exports: ['COIN_INFO', CoinsRateService],
+  exports: ['COIN_INFO', CoinGeekoService],
 })
 export class CoinsRateModule {}
